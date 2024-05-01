@@ -28,6 +28,8 @@ Get-AuthHeaders - For retrieving authentication headers for the current session.
 #>
 
 function Initialize-AuthSession {
+    [OutputType([hashtable])]
+    [CmdletBinding()]
     param(
         [string]$ApiKey = $null,
         [PSCredential]$Credentials = $null
