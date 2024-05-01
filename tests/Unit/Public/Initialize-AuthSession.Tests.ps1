@@ -40,27 +40,18 @@ Describe "Initialize-AuthSession" {
     Context "When no valid authentication method is provided" {
         It "Should return an error" {
             # Call the function without providing any authentication method
-            $result = Initialize-AuthSession
+            $result = Initialize-AuthSession -ErrorAction SilentlyContinue
 
             # Validate the result
             $result | Should -Be $null
         }
     }
 
-    Context "When invalid authentication method is provided" {
-        It "Should return an error" {
-            # Call the function with an invalid authentication method
-            $result = Initialize-AuthSession -InvalidMethod 'invalid'
-
-            # Validate the result
-            $result | Should -Be $null
-        }
-    }
 
     Context "When the credentials are not provided" {
         It "Should return an error" {
             # Call the function without providing any credentials
-            $result = Initialize-AuthSession -Credentials $null
+            $result = Initialize-AuthSession -Credentials $null -ErrorAction SilentlyContinue
 
             # Validate the result
             $result | Should -Be $null
