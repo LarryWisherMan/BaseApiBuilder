@@ -8,3 +8,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added reference to System.Web in `prefix.ps1` that imports assembly durning module import
+- Added reference to System.Net.Http in `prefix.ps1` that imports assembly durning module import

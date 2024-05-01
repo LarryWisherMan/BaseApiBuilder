@@ -1,6 +1,5 @@
 BeforeAll {
     $script:dscModuleName = 'BaseApiBuilder'
-
     Import-Module -Name $script:dscModuleName
 }
 
