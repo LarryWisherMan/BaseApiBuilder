@@ -1,0 +1,44 @@
+TOPIC
+    about_BaseApiBuilder
+
+SHORT DESCRIPTION
+    Powershell toolset for building Powershell wrappers for RESTful APIs
+
+LONG DESCRIPTION
+    The BaseApiBuilder module is a comprehensive toolkit designed to streamline the development of PowerShell modules that interface with various APIs. This foundational module provides developers with a robust set of tools and functions necessary for creating, managing, and deploying API wrappers efficiently. By abstracting common tasks such as session management, authentication, and request handling, BaseApiBuilder enables developers to focus on implementing specific API functionalities without reinventing the wheel.
+
+    Features:
+        Session Management: Handles the creation and lifecycle of API sessions, allowing for persistent connections and state management across multiple API calls.
+        Authentication Handling: Supports various authentication mechanisms including Basic Auth, API Keys, and OAuth, facilitating secure interactions with different APIs.
+        Dynamic URI Building: Offers utilities to construct API endpoints dynamically, accommodating APIs that require complex query parameters or path variations.
+        Error Handling: Robust error management to ensure reliability and ease of debugging when integrating with external services.
+        Modular Design: Functions are designed to be reused across different modules, making it easy to build new API integrations using a consistent and tested approach.
+
+    Target Audience:
+    BaseApiBuilder is intended for PowerShell developers and system administrators who frequently interact with RESTful services or any other type of APIs. It is especially valuable for organizations looking to standardize their API integration practices and develop reusable modules that can be adapted to various services with minimal additional coding.
+
+EXAMPLES
+    PS C:\> # Example of creating a new API session
+    PS C:\> $session = New-ApiSession -Uri 'https://api.example.com' -Authentication 'OAuth' -Token 'your_oauth_token_here'
+
+    PS C:\> # Example of making a GET request to retrieve data
+    PS C:\> $data = Invoke-ApiCall -Session $session -Method 'Get' -Endpoint '/data'
+
+    PS C:\> # Example of handling errors from an API call
+    PS C:\> try {
+    PS C:\>     $response = Invoke-ApiCall -Session $session -Method 'Get' -Endpoint '/invalid'
+    PS C:\> } catch {
+    PS C:\>     Write-Error "API call failed: $_"
+    PS C:\> }
+
+NOTE:
+    Thank you to all those who contributed to this module, by writing code, sharing opinions, and provided feedback.
+
+TROUBLESHOOTING NOTE:
+    Look out on the Github repository for issues and new releases.
+
+SEE ALSO
+    - https://github.com/YourGitHubUsername/BaseApiBuilder
+
+KEYWORDS
+    RESTful, API, PowerShell, Authentication, Session Management, Error Handling, Dynamic URI
