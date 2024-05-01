@@ -1,6 +1,9 @@
 BeforeAll {
     $script:dscModuleName = 'BaseApiBuilder'
     Import-Module -Name $script:dscModuleName
+
+    Add-Type -AssemblyName System.Web
+    Add-Type -AssemblyName System.Net.Http
 }
 
 AfterAll {
