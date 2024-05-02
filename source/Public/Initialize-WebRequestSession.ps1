@@ -1,63 +1,58 @@
 <#
 .SYNOPSIS
-Initializes a web request session with custom headers and user agent.
+    Initializes and returns a web request session object with custom headers and credentials.
 
 .DESCRIPTION
-The Initialize-WebRequestSession function creates a new web request session object, sets a default user agent, applies any custom headers provided, and optionally sets credentials for authentication. It also initializes a cookie container for the session to manage cookies across requests.
+    The Initialize-WebRequestSession function creates a new web request session, configuring it with optional headers,
+    credentials, and a cookie container to manage cookies across requests. This session can be used with various
+    cmdlets that require a WebRequestSession parameter.
 
-.PARAMETER CustomHeaders
-A hashtable of custom headers to be added to the web request session. Default is an empty hashtable.
-
-.PARAMETER UserAgent
-The user agent string to be used for the web request session. Default is "PowerShell API Client".
+.PARAMETER Headers
+    A hashtable containing headers to be added to the web request session. Default is an empty hashtable.
 
 .PARAMETER Credentials
-Optional credentials (PSCredential object) for authentication with the web request session.
+    A PSCredential object containing user credentials for the web request session.
 
 .EXAMPLE
-$customHeaders = @{ "Authorization" = "Bearer token" }
-$session = Initialize-WebRequestSession -CustomHeaders $customHeaders
+    $headers = @{ "Authorization" = "Bearer token" }
+    $creds = Get-Credential
+    $session = Initialize-WebRequestSession -Headers $headers -Credentials $creds
+    Invoke-WebRequest -Uri "https://example.com" -WebSession $session
 
-This example initializes a web request session with a custom Authorization header.
-
-.EXAMPLE
-$creds = Get-Credential
-$session = Initialize-WebRequestSession -Credentials $creds
-
-This example initializes a web request session with credentials for authentication.
-
-.NOTES
-This function is useful for setting up a web request session with specific requirements, such as custom headers or authentication, before making web requests.
-
-.LINK
-https://docs.microsoft.com/powershell/module/microsoft.powershell.utility/new-object
+.OUTPUTS
+    Microsoft.PowerShell.Commands.WebRequestSession
+    Returns a WebRequestSession object configured with headers, credentials, and cookie management.
 #>
-
-function Initialize-WebRequestSession {
+function Initialize-WebRequestSession
+{
     [CmdletBinding()]
     param(
-        [hashtable]$CustomHeaders = @{},
-        [string]$UserAgent = "PowerShell API Client",
-        [PSCredential]$credentials
+        [Parameter()]
+        [hashtable]$Headers = @{},
+
+        [Parameter()]
+        [PSCredential]$Credentials
     )
 
-    # Create a new web request session object
     $session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
 
-    # Set the default user agent and any custom headers provided
-    $session.Headers.Add("User-Agent", $UserAgent)
-    foreach ($key in $CustomHeaders.Keys) {
-        $session.Headers.Add($key, $CustomHeaders[$key])
+    foreach ($key in $Headers.Keys)
+    {
+        $session.Headers.Add($key, $Headers[$key])
+        Write-Verbose "Added header: $key with value: $($Headers[$key])"
     }
 
-    if ($credentials) { $session.Credentials = $credentials }
+    if ($Credentials)
+    {
+        $session.Credentials = $Credentials
+        Write-Verbose "Credentials set for the session."
+    }
 
-    # Initialize a new cookie container to manage cookies across requests
     $session.Cookies = New-Object System.Net.CookieContainer
+    Write-Verbose "Cookie container initialized."
 
-    # Optionally, specify security protocols (uncomment if needed)
     # [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 | [Net.SecurityProtocolType]::Tls11 | [Net.SecurityProtocolType]::Tls
+    Write-Verbose "Web request session object created."
 
-    # Return the configured session
     return $session
 }

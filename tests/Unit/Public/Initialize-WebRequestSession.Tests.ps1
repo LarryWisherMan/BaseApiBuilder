@@ -9,43 +9,23 @@ AfterAll {
     Get-Module -Name $script:dscModuleName -All | Remove-Module -Force
 }
 
-Describe "Initialize-WebRequestSession" {
-    Context "When custom headers are provided" {
-        It "Should initialize the web request session with custom headers" {
-            # Define the custom headers
-            $CustomHeaders = @{
-                'Authorization' = 'Bearer 12345'
-                'Content-Type' = 'application/json'
-            }
-
-            # Initialize the web request session
-            $session = Initialize-WebRequestSession -CustomHeaders $CustomHeaders
-
-            # Assert that the session object is not null
-            $session | Should -Not -BeNullOrEmpty
-
-            # Assert that the session headers contain the custom headers
-            foreach ($key in $CustomHeaders.Keys) {
-                $session.Headers[$key] | Should -Be $CustomHeaders[$key]
-            }
-        }
+Describe "Initialize-WebRequestSession Tests" {
+    It "Creates a session with default parameters" {
+        $session = Initialize-WebRequestSession
+        $session | Should -Not -Be $null
+        $session.Headers.Count | Should -Be 0
+        $session.Credentials | Should -Be $null
     }
 
-    Context "When credentials are provided" {
-        It "Should initialize the web request session with credentials" {
-            # Define the credentials
-            $testPassword = ConvertTo-SecureString -String 'TestPassword' -AsPlainText -Force
-            $Credentials = New-Object System.Management.Automation.PSCredential('username',$testPassword)
+    It "Sets custom headers correctly" {
+        $headers = @{ "Content-Type" = "application/json" }
+        $session = Initialize-WebRequestSession -Headers $headers
+        $session.Headers["Content-Type"] | Should -Be "application/json"
+    }
 
-            # Initialize the web request session
-            $session = Initialize-WebRequestSession -Credentials $Credentials
-
-            # Assert that the session object is not null
-            $session | Should -Not -BeNullOrEmpty
-
-            # Assert that the session credentials are set correctly
-            $session.Credentials | Should -Not -BeNullOrEmpty
-            $session.Credentials | should -BeOfType System.Net.NetworkCredential
-        }
+    It "Sets credentials correctly" {
+        $cred = New-Object System.Management.Automation.PSCredential ("username", (ConvertTo-SecureString "password" -AsPlainText -Force))
+        $session = Initialize-WebRequestSession -credentials $cred
+        $session.Credentials.UserName | Should -Be "username"
     }
 }
