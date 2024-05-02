@@ -9,91 +9,28 @@ AfterAll {
     Get-Module -Name $script:dscModuleName -All | Remove-Module -Force
 }
 
-Describe "Initialize-ApiSession" {
-    Context "When the API
-    credentials are provided" {
-        It "Should initialize the API session" {
-            # Define the API credentials
+Describe "Initialize-ApiSession Tests" {
 
-            New-ApiSession
-            $Session = Get-CurrentApiSession
-            $BaseUri = 'https://api.example.com'
-            $Session.Add('BaseURI',$BaseUri)
-            $Session.Add('WebSession','')
-            $Session.Add('AuthHeaders','')
-            $testPassword = ConvertTo-SecureString -String 'TestPassword' -AsPlainText -Force
-            $APICreds = New-Object System.Management.Automation.PSCredential('username',$testPassword)
+    BeforeAll {
 
-            # Call the function to initialize the API session
-            $result = Initialize-ApiSession -APICreds $APICreds
-
-            $resultSession = Get-CurrentApiSession
-            # Validate the result
-            $result | Should -Be $true
-            $resultSession.BaseURI | Should -Be $BaseUri
-            $resultSession.WebSession | Should -BeOfType 'Microsoft.PowerShell.Commands.WebRequestSession'
-            $resultSession.AuthHeaders.Authorization | Should -Be 'Basic dXNlcm5hbWU6VGVzdFBhc3N3b3Jk'
-
-        }
+        Mock Set-BaseUri {}
+        #Mock -ModuleName $script:dscModuleName -CommandName Initialize-WebRequestSession {param($Headers) return $Headers }
+        Mock Set-CurrentApiSession {}
+        Mock Get-CurrentApiSession { return $true }
+        Mock Close-ApiSession {}
+    }
+    It "Initializes with default parameters" {
+        $result = Initialize-ApiSession
+        $result | Should -Be $true
     }
 
-    Context "When the API credentials are not provided" {
-        It "Should return false" {
-            # Call the function without providing the API credentials
-            $result = Initialize-ApiSession -APICreds $null
-
-            # Validate the result
-            $result | Should -Be $false
-        }
+    It "Passes custom user agent" {
+        $result = Initialize-ApiSession -UserAgent "Test Agent"
+        $result.WebSession.Headers.'User-Agent' | Should -Be "Test Agent"
     }
 
-    Context "When the authentication session fails" {
-        It "Should return false" {
-
-            New-ApiSession
-            $Session = Get-CurrentApiSession
-            $BaseUri = 'https://api.example.com'
-            $Session.Add('BaseURI',$BaseUri)
-            $Session.Add('WebSession','')
-            $Session.Add('AuthHeaders','')
-            $testPassword = ConvertTo-SecureString -String 'TestPassword' -AsPlainText -Force
-            $APICreds = New-Object System.Management.Automation.PSCredential('username',$testPassword)
-
-
-            # Mock the Initialize-AuthSession function to return null
-            Mock -ModuleName $script:dscModuleName Initialize-AuthSession { return $null }
-
-            # Call the function to initialize the API session
-            $result = Initialize-ApiSession -APICreds $APICreds -ErrorAction SilentlyContinue
-
-            # Validate the result
-            $result | Should -Be $false
-        }
+    It "Sets BaseURI correctly" {
+        $return = Initialize-ApiSession -BaseURI "https://api.test.com"
+        $return.BaseUri | Should -Be "https://api.test.com"
     }
-
-    Context "When the web request session fails" {
-        It "Should return false" {
-
-            New-ApiSession
-            $Session = Get-CurrentApiSession
-            $BaseUri = 'https://api.example.com'
-            $Session.Add('BaseURI',$BaseUri)
-            $Session.Add('WebSession','')
-            $Session.Add('AuthHeaders','')
-            $testPassword = ConvertTo-SecureString -String 'TestPassword' -AsPlainText -Force
-            $APICreds = New-Object System.Management.Automation.PSCredential('username',$testPassword)
-
-
-            # Mock the Initialize-WebRequestSession function to return null
-            Mock -ModuleName $script:dscModuleName Initialize-WebRequestSession { return $null }
-
-            # Call the function to initialize the API session
-            $result = Initialize-ApiSession -APICreds $APICreds -ErrorAction SilentlyContinue
-
-            # Validate the result
-            $result | Should -Be $false
-        }
-    }
-
-
 }

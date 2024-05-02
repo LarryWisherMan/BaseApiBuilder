@@ -1,63 +1,83 @@
 <#
 .SYNOPSIS
-Initializes an API session with given credentials.
+    Initializes an API session by setting up web request headers, a user agent, and an optional base URI.
 
 .DESCRIPTION
-The Initialize-ApiSession function is designed to authenticate and establish a session for API calls. It takes a PSCredential object as input, which should contain the API credentials. The function attempts to initialize an authentication session and set up a web request session with custom headers, including handling for the 'Accept' header to ensure it defaults to 'application/json'. If successful, it sets the current API session for subsequent API calls.
+    The Initialize-ApiSession function sets up a session for interacting with APIs. It combines authentication and custom headers,
+    sets a user agent, optionally configures a base URI, and initializes a web request session. It closes any existing API session
+    before setting up a new one.
 
-.PARAMETER APICreds
-The credentials required to authenticate with the API. This should be a PSCredential object containing the API's username and password.
+.PARAMETER BaseURI
+    The base URI for the API. This is not mandatory but recommended if all requests will use the same base URI.
+
+.PARAMETER AuthHeaders
+    A hashtable of authentication headers. Default is an empty hashtable.
+
+.PARAMETER CustomHeaders
+    A hashtable of custom headers to be used in the API session. Default is an empty hashtable.
+
+.PARAMETER UserAgent
+    The user agent string to be used in the session. Defaults to "PowerShell API Client".
+
+.PARAMETER WebSession
+    An existing WebRequestSession object that can be reused. If not provided, a new session will be created.
 
 .EXAMPLE
-$creds = Get-Credential
-Initialize-ApiSession -APICreds $creds
+    $authHeaders = @{ "Authorization" = "Bearer your_token" }
+    $session = Initialize-ApiSession -BaseURI "https://api.example.com" -AuthHeaders $authHeaders
 
-This example demonstrates how to prompt the user for credentials and then use those credentials to initialize an API session.
-
-.NOTES
-This function is part of a module designed to facilitate interaction with RESTful APIs by managing sessions, authentication, and request headers.
-
-.LINK
-- Get-CurrentApiSession - Retrieves the current API session.
-- Close-ApiSession - Closes the current API session and clears any stored session information.
-
+.OUTPUTS
+    Hashtable
+    Returns a hashtable containing session details including time, base URI, authentication headers, and the web request session.
 #>
-
-function Initialize-ApiSession {
+function Initialize-ApiSession
+{
     [CmdletBinding()]
     [OutputType([bool])]
     param (
         [Parameter(Mandatory = $false)]
-        [PSCredential]$APICreds
+        [string]$BaseURI,
+
+        [Parameter()]
+        [Hashtable]$AuthHeaders = @{},
+
+        [Parameter()]
+        [Hashtable]$CustomHeaders = @{},
+
+        [Parameter()]
+        [string]$UserAgent = "PowerShell API Client",
+
+        [Parameter()]
+        [Microsoft.PowerShell.Commands.WebRequestSession]$WebSession
     )
 
-    if ($APICreds) {
+    Close-ApiSession
 
-        # Initialize the authentication session and retrieve headers
-        $CustomHeaders = Initialize-AuthSession -Credentials $APICreds
-        if ($null -eq $CustomHeaders) {
-            Write-Error "Failed to initialize authentication session."
-            return $false
-        }
-
-        # Add default Accept header if not already present
-        if (-not $CustomHeaders.ContainsKey("accept")) {
-            $CustomHeaders["accept"] = "application/json"
-        }
-
-        # Initialize the WebRequestSession with custom headers
-        $Session = Initialize-WebRequestSession -CustomHeaders $CustomHeaders
-        if ($null -eq $Session) {
-            Write-Error "Failed to initialize web request session."
-            return $false
-        }
-
-        # Set the current API session using the newly created session
-        Set-CurrentApiSession -NewSession $Session
-
-        Write-Verbose "API session initialized successfully."
-        return $true
+    $CombinedHeaders = $AuthHeaders + $CustomHeaders
+    if ($UserAgent)
+    {
+        $CombinedHeaders["User-Agent"] = $UserAgent
     }
 
-    else { return $false }
+    if ($BaseURI)
+    {
+        #Set-BaseUri -Uri $BaseURI
+    }
+
+    if (-not $WebSession)
+    {
+        $WebSession = Initialize-WebRequestSession -Headers $CombinedHeaders
+    }
+
+    $hash = @{
+        Time        = (Get-Date)
+        BaseUri     = $BaseURI
+        AuthHeaders = $AuthHeaders
+        WebSession  = $WebSession
+    }
+
+    Set-CurrentApiSession -SessionHash $hash
+    Write-Verbose "API session initialized successfully."
+
+    return (Get-CurrentApiSession)
 }
