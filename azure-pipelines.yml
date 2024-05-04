@@ -167,6 +167,19 @@ stages:
               filePath: './build.ps1'
               arguments: '-tasks publish'
             env:
-              MainGitBranch: 'main'
-              BasicAuthPAT: $(System.AccessToken)
-              PackageToken : $(System.AccessToken)
+              GitHubToken: $(GitHubToken)
+              GalleryApiToken: $(GalleryApiToken)
+              ReleaseBranch: $(defaultBranch)
+              MainGitBranch: $(defaultBranch)
+
+          - task: PowerShell@2
+            name: sendChangelogPR
+            displayName: 'Send Changelog PR'
+            inputs:
+              filePath: './build.ps1'
+              arguments: '-tasks Create_ChangeLog_GitHub_PR'
+              pwsh: true
+            env:
+              GitHubToken: $(GitHubToken)
+              ReleaseBranch: $(defaultBranch)
+              MainGitBranch: $(defaultBranch)
