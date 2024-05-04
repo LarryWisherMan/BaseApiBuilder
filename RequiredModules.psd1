@@ -1,10 +1,10 @@
 @{
 	#"Sampler.AzureDevOpsTasks" = 'latest'
+	InvokeBuild           = 'latest'
+	PSScriptAnalyzer      = 'latest'
+	Pester                = 'latest'
 	ModuleBuilder         = 'latest'
 	ChangelogManagement   = 'latest'
-	PSScriptAnalyzer      = 'latest'
-	InvokeBuild           = 'latest'
-	Pester                = 'latest'
 	Sampler               = 'latest'
 	'Sampler.GitHubTasks' = 'latest'
 }
