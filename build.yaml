@@ -38,15 +38,15 @@ NestedModule:
 ####################################################
 #            Pull Request Configuration            #
 ####################################################
-PullRequestConfig:
-  BranchName: 'updateChangelogAfterv{0}'
-  Title: 'Updating Changelog since release of v{0} +semver:skip'
-  Description: 'Updating Changelog since release of v{0} +semver:skip'
-  Instance: 'dev.azure.com'
-  Collection: 'TimeForSupport'
-  Project: 'RCARPEN-ScriptShare'
-  RepositoryID: 'BaseApiBuilder'
-  Debug: false
+#PullRequestConfig:
+#  BranchName: 'updateChangelogAfterv{0}'
+#  Title: 'Updating Changelog since release of v{0} +semver:skip'
+#  Description: 'Updating Changelog since release of v{0} +semver:skip'
+#  Instance: 'dev.azure.com'
+#  Collection: 'TimeForSupport'
+#  Project: 'RCARPEN-ScriptShare'
+#  RepositoryID: 'BaseApiBuilder'
+#  Debug: false
 
 
 ####################################################
@@ -143,24 +143,25 @@ Pester:
 ModuleBuildTasks:
   Sampler:
     - '*.build.Sampler.ib.tasks'
-  Sampler.AzureDevOpsTasks:
-    - "*"
-
+#  Sampler.AzureDevOpsTasks:
+#    - "*"
+  Sampler.GitHubTasks:
+    - '*.ib.tasks'
 
 ####################################################
 #             Changelog Configuration              #
 ####################################################
-ChangelogConfig:
-  FilesToAdd:
-    - 'CHANGELOG.md'
-  UpdateChangelogOnPrerelease: false
+#ChangelogConfig:
+#  FilesToAdd:
+#    - 'CHANGELOG.md'
+#  UpdateChangelogOnPrerelease: false
 
 ####################################################
 #                Git Configuration                 #
 ####################################################
-GitConfig:
-  UserName: 'Ryan Carpenter'
-  UserEmail: 'rcarpen@lhs.org'
+#GitConfig:
+#  UserName: 'Ryan Carpenter'
+#  UserEmail: 'rcarpen@lhs.org'
 
 
 # Invoke-Build Header to be used to 'decorate' the terminal output of the tasks.
@@ -174,3 +175,10 @@ TaskHeader: |
   Write-Build DarkGray "  $Path"
   Write-Build DarkGray "  $($Task.InvocationInfo.ScriptName):$($Task.InvocationInfo.ScriptLineNumber)"
   ""
+
+GitHubConfig:
+  GitHubFilesToAdd:
+    - 'CHANGELOG.md'
+  GitHubConfigUserName: LarryWisherMan
+  GitHubConfigUserEmail: MikeRow@upkep.net
+  UpdateChangelogOnPrerelease: false
