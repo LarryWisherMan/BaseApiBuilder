@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2024-05-07
+
 ### Added 
 - New function `Invoke-ApiRequest` to standarized API calling with the websession
 - New function `New-FilterQuery` to Construct a complete filter query string from a hashtable
