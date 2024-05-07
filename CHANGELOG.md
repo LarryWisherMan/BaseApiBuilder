@@ -5,6 +5,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added 
+- New function `Invoke-ApiRequest` to standarized API calling with the websession
+
 ## [0.1.0] - 2024-05-03
 
 ### Added
