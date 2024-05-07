@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added 
 - New function `Invoke-ApiRequest` to standarized API calling with the websession
+- New function `New-FilterQuery` to Construct a complete filter query string from a hashtable
+- New function `Invoke-BuildCondition` to generate a query condition string dynamically based on the input field and details provided (used in `New-FilterQuery`)
+- New function `Invoke-EscapeFilterValue` to escape characters that have special significance in query languages, such as backslashes (\), asterisks (*), and double quotes (") (Used in `Invoke-BuildCondition`)
 
 ## [0.1.0] - 2024-05-03
 
