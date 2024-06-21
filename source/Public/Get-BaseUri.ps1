@@ -14,7 +14,7 @@ This example demonstrates how to retrieve the base URI for the current API sessi
 This function is part of the BaseApiBuilder module which provides a set of tools for interacting with RESTful APIs. It requires the base URI to be initialized before calling this function.
 
 .LINK
-Set-BaseUri - For initializing the base URI for the API session.
+Set-BaseUri - For initializing the base URI for the API session..
 
 #>
 
